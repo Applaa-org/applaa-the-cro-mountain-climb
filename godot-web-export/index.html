@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The CRO Mountain Climb - Preview</title>
+    <style>
+        body { margin: 0; font-family: Arial, sans-serif; background: #87CEEB; }
+        canvas { display: block; margin: 0 auto; border: 2px solid #000; }
+        #ui { position: absolute; top: 10px; left: 10px; color: white; font-size: 18px; }
+        #startScreen, #victoryScreen, #defeatScreen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); color: white; text-align: center; padding-top: 200px; }
+        button { padding: 10px 20px; font-size: 16px; margin: 10px; }
+    </style>
+</head>
+<body>
+    <div id="startScreen">
+        <h1>The CRO Mountain Climb</h1>
+        <p>Climb the mountain by avoiding CRO obstacles and collecting optimization tools.<br>Controls: WASD to move, Space to jump.</p>
+        <button id="startBtn">Start Game</button>
+        <button id="closeBtn">Close</button>
+    </div>
+    <div id="victoryScreen">
+        <h1>Victory! You reached the top!</h1>
+        <p id="victoryScore">Score: 0</p>
+        <button id="restartBtn">Restart Level</button>
+        <button id="menuBtn">Main Menu</button>
+        <button id="closeBtnVictory">Close</button>
+    </div>
+    <div id="defeatScreen">
+        <h1>Defeat! Try again!</h1>
+        <p id="defeatScore">Score: 0</p>
+        <button id="restartBtnDefeat">Restart Level</button>
+        <button id="menuBtnDefeat">Main Menu</button>
+        <button id="closeBtnDefeat">Close</button>
+    </div>
+    <div id="ui">
+        <div>Health: <span id="health">100</span></div>
+        <div>Score: <span id="score">0</span></div>
+    </div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        let gameState = 'start';
+        let player = { x: 100, y: 500, vx: 0, vy: 0, width: 32, height: 32, health: 100 };
+        let score = 0;
+        let collectibles = [{ x: 300, y: 400, width: 16, height: 16 }];
+        let hazards = [{ x: 400, y: 450, width: 32, height: 32, damage: 50 }];
+        let goal = { x: 700, y: 100, width: 32, height: 32 };
+        const gravity = 0.5;
+        const speed = 5;
+        const jumpPower = -10;
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw mountain background (simplified)
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // Draw player
+            ctx.fillStyle = '#FF0000';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            // Draw collectibles
+            ctx.fillStyle = '#FFD700';
+            collectibles.forEach(c => ctx.fillRect(c.x, c.y, c.width, c.height));
+            // Draw hazards
+            ctx.fillStyle = '#000000';
+            hazards.forEach(h => ctx.fillRect(h.x, h.y, h.width, h.height));
+            // Draw goal
+            ctx.fillStyle = '#00FF00';
+            ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
+        }
+
+        function update() {
+            if (gameState !== 'playing') return;
+            // Gravity
+            player.vy += gravity;
+            player.y += player.vy;
+            // Ground collision
+            if (player.y + player.height >= 550) {
+                player.y = 550 - player.height;
+                player.vy = 0;
+            }
+            // Collectibles
+            collectibles = collectibles.filter(c => {
+                if (player.x < c.x + c.width && player.x + player.width > c.x &&
+                    player.y < c.y + c.height && player.y + player.height > c.y) {
+                    score += 10;
+                    document.getElementById('score').textContent = score;
+                    return false;
+                }
+                return true;
+            });
+            // Hazards
+            hazards.forEach(h => {
+                if (player.x < h.x + h.width && player.x + player.width > h.x &&
+                    player.y < h.y + h.height && player.y + player.height > h.y) {
+                    player.health -= h.damage;
+                    document.getElementById('health').textContent = player.health;
+                    if (player.health <= 0) gameState = 'defeat';
+                }
+            });
+            // Goal
+            if (player.x < goal.x + goal.width && player.x + player.width > goal.x &&
+                player.y < goal.y + goal.height && player.y + player.height > goal.y) {
+                gameState = 'victory';
+            }
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (gameState !== 'playing') return;
+            if (e.code === 'KeyA') player.vx = -speed;
+            if (e.code === 'KeyD') player.vx = speed;
+            if (e.code === 'Space' && player.y + player.height >= 550) player.vy = jumpPower;
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'KeyA' || e.code === 'KeyD') player.vx = 0;
+        });
+
+        document.getElementById('startBtn').addEventListener('click', () => {
+            gameState = 'playing';
+            document.getElementById('startScreen').style.display = 'none';
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', () => window.close());
+        document.getElementById('restartBtn').addEventListener('click', () => location.reload());
+        document.getElementById('menuBtn').addEventListener('click', () => location.reload());
+        document.getElementById('closeBtnVictory').addEventListener('click', () => window.close());
+        document.getElementById('restartBtnDefeat').addEventListener('click', () => location.reload());
+        document.getElementById('menuBtnDefeat').addEventListener('click', () => location.reload());
+
+        // Show start screen initially
+        document.getElementById('startScreen').style.display = 'block';
+        gameLoop();
+    </script>
+</body>
+</html>

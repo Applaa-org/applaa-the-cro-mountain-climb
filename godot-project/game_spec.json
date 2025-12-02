@@ -1,0 +1,65 @@
+{
+  "game": {
+    "name": "The CRO Mountain Climb",
+    "type": "2D",
+    "genre": "platformer",
+    "description": "A mountain-climbing adventure where obstacles represent website conversion problems — Slow-Load Landslides, Form-Field Fog, CTA Avalanche. Collect optimization tools to climb higher."
+  },
+  "settings": {
+    "window": {
+      "width": 800,
+      "height": 600
+    },
+    "physics": {
+      "gravity": 980
+    }
+  },
+  "player": {
+    "name": "Climber",
+    "health": 100,
+    "speed": 200,
+    "abilities": ["jump", "collect_tools"]
+  },
+  "entities": {
+    "hazards": [
+      {
+        "name": "SlowLoadLandslide",
+        "damage": 50,
+        "behavior": "falling_debris"
+      },
+      {
+        "name": "FormFieldFog",
+        "damage": 30,
+        "behavior": "obscuring_vision"
+      },
+      {
+        "name": "CTAAvalanche",
+        "damage": 100,
+        "behavior": "rolling_boulder"
+      }
+    ],
+    "collectibles": [
+      {
+        "name": "OptimizationTool",
+        "value": 10,
+        "effect": "increase_score"
+      }
+    ]
+  },
+  "levels": [
+    {
+      "name": "Mountain Climb",
+      "background": "mountain",
+      "obstacles": ["slow_load_landslide", "form_field_fog", "cta_avalanche"],
+      "collectibles": ["optimization_tools"]
+    }
+  ],
+  "logic": {
+    "winCondition": "reach_goal",
+    "loseCondition": "health_zero",
+    "scoring": {
+      "pointsPerCollectible": 10,
+      "pointsPerHazardAvoided": 5
+    }
+  }
+}
