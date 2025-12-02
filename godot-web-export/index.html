@@ -44,8 +44,8 @@
         let gameState = 'start';
         let player = { x: 100, y: 500, vx: 0, vy: 0, width: 32, height: 32, health: 100 };
         let score = 0;
-        let collectibles = [{ x: 300, y: 400, width: 16, height: 16 }];
-        let hazards = [{ x: 400, y: 450, width: 32, height: 32, damage: 50 }];
+        let collectibles = [{ x: 300, y: 400, width: 16, height: 16 }, { x: 500, y: 300, width: 16, height: 16 }];
+        let hazards = [{ x: 400, y: 0, width: 32, height: 32, damage: 50, vy: 2 }, { x: 600, y: -100, width: 32, height: 32, damage: 50, vy: 2 }];
         let goal = { x: 700, y: 100, width: 32, height: 32 };
         const gravity = 0.5;
         const speed = 5;
@@ -80,6 +80,11 @@
                 player.y = 550 - player.height;
                 player.vy = 0;
             }
+            // Move hazards
+            hazards.forEach(h => {
+                h.y += h.vy;
+                if (h.y > 650) h.y = -50; // Reset
+            });
             // Collectibles
             collectibles = collectibles.filter(c => {
                 if (player.x < c.x + c.width && player.x + player.width > c.x &&
