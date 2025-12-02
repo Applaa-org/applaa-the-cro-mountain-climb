@@ -4,8 +4,8 @@ const SPEED: float = 200.0
 const JUMP_VELOCITY: float = -400.0
 var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 
-@onready var health_label = $HealthLabel
-@onready var score_label = $ScoreLabel
+@onready var health_label = $"../CanvasLayer/HealthLabel"
+@onready var score_label = $"../CanvasLayer/ScoreLabel"
 
 func _ready():
 	update_ui()

@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://defeatscreen"]
+[gd_scene load_steps=2 format=3 uid="uid://defeatscreen"]
 
 [ext_resource type="Script" path="res://scripts/DefeatScreen.gd" id="1"]
-[ext_resource type="Theme" uid="uid://theme" path="res://themes/DefaultTheme.tres" id="2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
 bg_color = Color(0.5, 0.1, 0.1, 1)
